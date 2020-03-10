@@ -36,7 +36,7 @@ int main(void)
         for (i = 0; i < numOfArgs; i++)
         {
             printf("%s", args[i]);
-            //printf("\n");
+            printf("\n");
         }
 
         //1. Fork child process with fork()
@@ -56,10 +56,12 @@ int main(void)
             exit(0);
         }
 
+        //TODO: Fix this
         if (strcmp("&", args[numOfArgs - 1]) == 0)
         {
             shouldWait=1;
-            printf("There is a &");
+            //strcat(args[numOfArgs-2],"\0");
+            args[numOfArgs-1]="\0"; //Marks last element as end of string (i hope)
         }
 
         //Standard child handling
@@ -77,7 +79,7 @@ int main(void)
         }
         else if (shouldWait == 1)
         {
-            printf("Got here because of a &\n");
+            printf("Waiting...");
             wait(NULL);
         }
         else
