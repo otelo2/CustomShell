@@ -8,6 +8,7 @@
 int main(void)
 {
     char *args[MAX_LINE / 2 + 1]; //command line arguments
+    char *history[MAX_LINE / 2 + 1];
     int should_run, firstRun = 1; //flag to determine when to end program
     pid_t pidC1;
     char temp[MAX_LINE / 2 + 1];
@@ -19,7 +20,7 @@ int main(void)
     while (should_run)
     {
         i = 0;
-        printf("jose>");
+        printf("\njose>");
         fflush(stdout);
         //Ask for user input source: https://stackoverflow.com/questions/15472299/split-string-into-tokens-and-save-them-in-an-array
         fgets(temp, sizeof temp, stdin);
@@ -33,11 +34,11 @@ int main(void)
 
         //Code to see what arguments we have (debugging)
         //printf("%d\n",numOfArgs);
-        for (i = 0; i < numOfArgs; i++)
+        /* for (i = 0; i < numOfArgs; i++)
         {
             printf("%s", args[i]);
             printf("\n");
-        }
+        } */
 
         //1. Fork child process with fork()
         //pidC1 = fork();
@@ -59,9 +60,17 @@ int main(void)
         //TODO: Fix this
         if (strcmp("&", args[numOfArgs - 1]) == 0)
         {
-            shouldWait=1;
+            shouldWait = 1;
             //strcat(args[numOfArgs-2],"\0");
-            args[numOfArgs-1]="\0"; //Marks last element as end of string (i hope)
+            args[numOfArgs - 1] = NULL; //Marks last element as end of string (i hope)
+        }
+
+        if (strcmp("history", args[0]) == 0)
+        {
+            if (history == NULL)
+            {
+
+            }
         }
 
         //Standard child handling
