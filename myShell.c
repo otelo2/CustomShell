@@ -10,7 +10,8 @@ int main(void)
     int should_run = 1;           //flag to determine when to end program
     pid_t pidC1;
     char temp[MAX_LINE / 2 + 1];
-    int numOfArgs,i = 0;
+    int numOfArgs, i = 0;
+    pidC1 = fork();
 
     while (should_run)
     {
@@ -18,23 +19,28 @@ int main(void)
         fflush(stdout);
         //Ask for user input source: https://stackoverflow.com/questions/15472299/split-string-into-tokens-and-save-them-in-an-array
         fgets(temp, sizeof temp, stdin);
-        args[i] = strtok(temp," ");
-        while (args[i]!=NULL)
+        args[i] = strtok(temp, " ");
+        while (args[i] != NULL)
         {
-            args[++i] = strtok(NULL," ");
+            args[++i] = strtok(NULL, " ");
         }
-        numOfArgs=i;
+        numOfArgs = i;
         //Code to see what arguments we have (debugging)
         /*
-        printf("%d\n",numOfArgs);
-        for (i = 0; i < 6; i++)
+        //printf("%d\n",numOfArgs);
+        for (i = 0; i < numOfArgs; i++)
         {
-            printf(args[i]);
+            printf("%s",args[i]);
             printf("\n");
-        } */
-        
+        } 
+        if (strcmp("exit\n", args[0]) == 0)
+        {
+            should_run=0;
+            return 0;
+        }
+        */
         //1. Fork child process with fork()
-        pidC1 = fork();
+        //pidC1 = fork();
 
         if (pidC1 < 0)
         {
@@ -42,13 +48,13 @@ int main(void)
         }
         else if (pidC1 == 0)
         {
-            //printf("Child ID: %d\n", getpid());
-            execvp("ps", "-ael");
+            printf("Child ID: %d\n", getpid());
+            execvp(args[0], args);
         }
-        else
+        else if (strcmp("&\n", args[numOfArgs - 1]) == 0)
         {
             wait(NULL);
-            printf("Parent ID: %d\n", getppid());
+            printf("Got here because of a &\n");
         }
         //2. Child will invoce execvp()
         //3. If command included &, parent will wait();
