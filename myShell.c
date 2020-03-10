@@ -12,12 +12,13 @@ int main(void)
     pid_t pidC1;
     char temp[MAX_LINE / 2 + 1];
     int numOfArgs, i = 0;
+    int shouldWait = 0;
 
     //pidC1 = fork();
 
     while (should_run)
     {
-        i=0;
+        i = 0;
         printf("jose>");
         fflush(stdout);
         //Ask for user input source: https://stackoverflow.com/questions/15472299/split-string-into-tokens-and-save-them-in-an-array
@@ -28,8 +29,8 @@ int main(void)
             args[++i] = strtok(NULL, " ");
         }
         numOfArgs = i;
-        args[numOfArgs-1] = strtok(args[numOfArgs-1],"\n");
-        
+        args[numOfArgs - 1] = strtok(args[numOfArgs - 1], "\n");
+
         //Code to see what arguments we have (debugging)
         //printf("%d\n",numOfArgs);
         for (i = 0; i < numOfArgs; i++)
@@ -54,7 +55,12 @@ int main(void)
             should_run = 0;
             exit(0);
         }
-        //pidC1=fork();
+
+        if (strcmp("&", args[numOfArgs - 1]) == 0)
+        {
+            shouldWait=1;
+            printf("There is a &");
+        }
 
         //Standard child handling
         if (pidC1 < 0)
@@ -69,7 +75,7 @@ int main(void)
             execvp(args[0], args);
             exit(0);
         }
-        else if (strcmp("&", args[numOfArgs - 1]) == 0)
+        else if (shouldWait == 1)
         {
             printf("Got here because of a &\n");
             wait(NULL);
