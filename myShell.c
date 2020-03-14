@@ -8,12 +8,12 @@
 int main(void)
 {
     char *args[MAX_LINE / 2 + 1]; //command line arguments
-    char history[10][38];           
+    char history[10][38];
     char temp[MAX_LINE / 2 + 1];
     char *oldArgs[MAX_LINE / 2 + 1];
     int should_run, firstRun = 1; //flag to determine when to end program
     pid_t pidC1;
-    int numOfArgs, i = 0;
+    int numOfArgs, numOfOldArgs, i = 0;
     int shouldWait = 0;
     int historyCounter = 0;
 
@@ -28,10 +28,10 @@ int main(void)
         fgets(temp, sizeof temp, stdin);
 
         //If what the user typed doesnt have the "history" substring, add it to the history string
-        if (strstr(temp, "history") == NULL)
+        if ((strstr(temp, "history") || strstr(temp,"!!") || strstr(temp,"!")) == NULL)
         {
             //puts temp into the position historyCounter if the history string array
-            strcpy(history[historyCounter], temp); 
+            strcpy(history[historyCounter], temp);
             //strcat(history, "\n");
             historyCounter++;
         }
@@ -91,16 +91,31 @@ int main(void)
                 {
                     //printf("%4d\t%s\n", historyCounter - k, oldArgs[k]);
                     printf("%4d\t%s", historyCounter - k, history[k]);
-                    
                 }
             }
         }
 
-        //Chec for !! command
+        //Check for !! command (excecute most recent command)
         if (strcmp("!!", args[0]) == 0)
         {
-            printf("Check: %d", strcmp("!!", args[0]));
-            printf("\n! wow");
+            //most recent: historyCounter-1
+            //Turn string into token
+            int k = 0;
+            oldArgs[i] = strtok(history[historyCounter - 1], " ");
+            printf("%s",history[historyCounter-1]);
+            while (oldArgs[i] != NULL)
+            {
+                oldArgs[++k] = strtok(NULL, " ");
+            }
+            numOfOldArgs = k;
+            oldArgs[numOfOldArgs - 1] = strtok(oldArgs[numOfOldArgs - 1], "\n");
+            /* for (k = 0; k < numOfOldArgs; k++)
+            {
+                printf("%s", oldArgs[k]);
+                printf("\n");
+            } */
+
+            memcpy(args,oldArgs,sizeof(oldArgs));
         }
 
         //Standard child handling
