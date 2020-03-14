@@ -8,7 +8,7 @@
 int main(void)
 {
     char *args[MAX_LINE / 2 + 1]; //command line arguments
-    char history[200];            //Sorry not sorry
+    char history[200];           //Sorry not sorry
     char temp[MAX_LINE / 2 + 1];
     char *oldArgs[MAX_LINE / 2 + 1];
     int should_run, firstRun = 1; //flag to determine when to end program
@@ -26,6 +26,16 @@ int main(void)
         fflush(stdout);
         //Ask for user input source: https://stackoverflow.com/questions/15472299/split-string-into-tokens-and-save-them-in-an-array
         fgets(temp, sizeof temp, stdin);
+
+        //If what the user typed doesnt have the "history" substring, add it to the history string
+        if (strstr(temp, "history") == NULL)
+        {
+            strcat(history, temp);
+            strcat(history, " \n");
+            historyCounter++;
+        }
+
+        //Turn string into token
         args[i] = strtok(temp, " ");
         while (args[i] != NULL)
         {
@@ -52,24 +62,22 @@ int main(void)
             exit(0);
         }
 
+        //Check for &
         if (strcmp("&", args[numOfArgs - 1]) == 0)
         {
             shouldWait = 1;
             args[numOfArgs - 1] = NULL;
         }
 
+        //Check for history command
         if (strcmp("history", args[0]) == 0)
         {
-            if (history == NULL)
+            if (historyCounter == 0)
             {
                 printf("Nothing in history\n");
             }
             else
             {
-                /* for (int j = historyCounter; j > 0; j--)
-                {
-                    printf("%4d\t%s", j, history[j]);
-                } */
                 int k = 0;
                 oldArgs[k] = strtok(history, "\n");
                 while (oldArgs[k] != NULL)
@@ -77,24 +85,14 @@ int main(void)
                     oldArgs[++k] = strtok(NULL, "\n");
                 }
 
-                
                 for (k = 0; k < historyCounter; k++)
                 {
-                    printf("%4d\t%s\n", historyCounter-k, oldArgs[k]);
+                    printf("%4d\t%s\n", historyCounter - k, oldArgs[k]);
                 }
-
-            /*     oldArgs[i];
-                printf("%4d\t%s", numOfArgs, history); */
             }
         }
-        else
-        {
-            strcat(history, temp);
-            strcat(history, " \n");
-            historyCounter++;
-        }
 
-        //printf("Check: %d",strcmp("!!",args[0]));
+        //Chec for !! command
         if (strcmp("!!", args[0]) == 0)
         {
             printf("Check: %d", strcmp("!!", args[0]));
