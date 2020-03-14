@@ -8,7 +8,7 @@
 int main(void)
 {
     char *args[MAX_LINE / 2 + 1]; //command line arguments
-    char history[200];           //Sorry not sorry
+    char history[10][38];           
     char temp[MAX_LINE / 2 + 1];
     char *oldArgs[MAX_LINE / 2 + 1];
     int should_run, firstRun = 1; //flag to determine when to end program
@@ -30,7 +30,8 @@ int main(void)
         //If what the user typed doesnt have the "history" substring, add it to the history string
         if (strstr(temp, "history") == NULL)
         {
-            strcat(history, temp);
+            //puts temp into the position historyCounter if the history string array
+            strcpy(history[historyCounter], temp); 
             //strcat(history, "\n");
             historyCounter++;
         }
@@ -79,16 +80,18 @@ int main(void)
             else
             {
                 int k = 0;
-                oldArgs[k] = strtok(history, "\n");
+                /* oldArgs[k] = strtok(history, "\n");
                 while (oldArgs[k] != NULL)
                 {
                     oldArgs[++k] = strtok(NULL, "\n");
-                }
+                } */
                 //oldArgs[k-1] = strtok(oldArgs[numOfArgs-1],"\n");
 
                 for (k = 0; k < historyCounter; k++)
                 {
-                    printf("%4d\t%s\n", historyCounter - k, oldArgs[k]);
+                    //printf("%4d\t%s\n", historyCounter - k, oldArgs[k]);
+                    printf("%4d\t%s", historyCounter - k, history[k]);
+                    
                 }
             }
         }
