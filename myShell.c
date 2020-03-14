@@ -8,19 +8,20 @@
 int main(void)
 {
     char *args[MAX_LINE / 2 + 1]; //command line arguments
-    char *history[MAX_LINE / 2 + 1];
+    char history[200];            //Sorry not sorry
+    char temp[MAX_LINE / 2 + 1];
     int should_run, firstRun = 1; //flag to determine when to end program
     pid_t pidC1;
-    char temp[MAX_LINE / 2 + 1];
     int numOfArgs, i = 0;
     int shouldWait = 0;
+    int historyCounter = 0;
 
     //pidC1 = fork();
 
     while (should_run)
     {
         i = 0;
-        printf("\njose>");
+        printf("\nshell>");
         fflush(stdout);
         //Ask for user input source: https://stackoverflow.com/questions/15472299/split-string-into-tokens-and-save-them-in-an-array
         fgets(temp, sizeof temp, stdin);
@@ -31,6 +32,9 @@ int main(void)
         }
         numOfArgs = i;
         args[numOfArgs - 1] = strtok(args[numOfArgs - 1], "\n");
+
+        /* 
+        */
 
         //Code to see what arguments we have (debugging)
         //printf("%d\n",numOfArgs);
@@ -43,13 +47,6 @@ int main(void)
         //1. Fork child process with fork()
         //pidC1 = fork();
 
-        if (firstRun = 1)
-        {
-            firstRun = 0;
-            pidC1 = fork();
-            firstRun = 0; //asures we only get one fork
-        }
-
         //check for exit command
         if (strcmp("exit", args[0]) == 0)
         {
@@ -57,23 +54,36 @@ int main(void)
             exit(0);
         }
 
-        //TODO: Fix this
         if (strcmp("&", args[numOfArgs - 1]) == 0)
         {
             shouldWait = 1;
-            //strcat(args[numOfArgs-2],"\0");
-            args[numOfArgs - 1] = NULL; //Marks last element as end of string (i hope)
+            args[numOfArgs - 1] = NULL;
         }
 
         if (strcmp("history", args[0]) == 0)
         {
             if (history == NULL)
             {
-
+                printf("Nothing in history\n");
+            }
+            else
+            {
+                for (int j = historyCounter; j > 0; j--)
+                {
+                    printf("%4d\t%s", j, history[j]);
+                }
             }
         }
 
+        //printf("Check: %d",strcmp("!!",args[0]));
+        if (strcmp("!!", args[0]) == 0)
+        {
+            printf("Check: %d", strcmp("!!", args[0]));
+            printf("\n! wow");
+        }
+
         //Standard child handling
+        pidC1 = fork();
         if (pidC1 < 0)
         {
             fprintf(stderr, "Fork failed");
@@ -81,7 +91,6 @@ int main(void)
         else if (pidC1 == 0)
         {
             //printf("Child ID: %d\n", getpid());
-
             //This line can't be modified according to the document.
             execvp(args[0], args);
             exit(0);
@@ -90,6 +99,7 @@ int main(void)
         {
             printf("Waiting...");
             wait(NULL);
+            shouldWait = 0;
         }
         else
         {
