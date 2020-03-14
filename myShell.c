@@ -10,6 +10,7 @@ int main(void)
     char *args[MAX_LINE / 2 + 1]; //command line arguments
     char history[200];            //Sorry not sorry
     char temp[MAX_LINE / 2 + 1];
+    char *oldArgs[MAX_LINE / 2 + 1];
     int should_run, firstRun = 1; //flag to determine when to end program
     pid_t pidC1;
     int numOfArgs, i = 0;
@@ -32,9 +33,6 @@ int main(void)
         }
         numOfArgs = i;
         args[numOfArgs - 1] = strtok(args[numOfArgs - 1], "\n");
-
-        /* 
-        */
 
         //Code to see what arguments we have (debugging)
         //printf("%d\n",numOfArgs);
@@ -68,11 +66,32 @@ int main(void)
             }
             else
             {
-                for (int j = historyCounter; j > 0; j--)
+                /* for (int j = historyCounter; j > 0; j--)
                 {
                     printf("%4d\t%s", j, history[j]);
+                } */
+                int k = 0;
+                oldArgs[k] = strtok(history, "\n");
+                while (oldArgs[k] != NULL)
+                {
+                    oldArgs[++k] = strtok(NULL, "\n");
                 }
+
+                
+                for (k = 0; k < historyCounter; k++)
+                {
+                    printf("%4d\t%s\n", historyCounter-k, oldArgs[k]);
+                }
+
+            /*     oldArgs[i];
+                printf("%4d\t%s", numOfArgs, history); */
             }
+        }
+        else
+        {
+            strcat(history, temp);
+            strcat(history, " \n");
+            historyCounter++;
         }
 
         //printf("Check: %d",strcmp("!!",args[0]));
