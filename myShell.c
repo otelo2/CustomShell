@@ -31,7 +31,7 @@ int main(void)
         if (strstr(temp, "history") == NULL)
         {
             strcat(history, temp);
-            strcat(history, " \n");
+            //strcat(history, "\n");
             historyCounter++;
         }
 
@@ -84,6 +84,7 @@ int main(void)
                 {
                     oldArgs[++k] = strtok(NULL, "\n");
                 }
+                //oldArgs[k-1] = strtok(oldArgs[numOfArgs-1],"\n");
 
                 for (k = 0; k < historyCounter; k++)
                 {
