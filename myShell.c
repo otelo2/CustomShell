@@ -126,6 +126,17 @@ int main(void)
         if (strcmp("!", args[0]) == 0)
         {
             //Yeehaw
+            //Turn the number to int
+            int k = 0;
+            oldArgs[k] = strtok(history[historyCounter-atoi(args[1]) - 1], " ");
+            while (oldArgs[k] != NULL)
+            {
+                oldArgs[++k] = strtok(NULL, " ");
+            }
+            numOfOldArgs = k;
+            oldArgs[numOfOldArgs - 1] = strtok(oldArgs[numOfOldArgs - 1], "\n");
+
+            memcpy(args, oldArgs, sizeof(oldArgs));
         }
 
         //Standard child handling
