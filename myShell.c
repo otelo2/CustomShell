@@ -17,8 +17,6 @@ int main(void)
     int shouldWait = 0;
     int historyCounter = 0;
 
-    //pidC1 = fork();
-
     while (should_run)
     {
         i = 0;
@@ -28,11 +26,20 @@ int main(void)
         fgets(temp, sizeof temp, stdin);
 
         //If what the user typed doesnt have the "history" substring, add it to the history string
-        if ((strstr(temp, "history") || strstr(temp,"!!") || strstr(temp,"!")) == NULL)
+        if (strstr(temp, "history") == NULL)
         {
             //puts temp into the position historyCounter if the history string array
-            strcpy(history[historyCounter], temp);
-            //strcat(history, "\n");
+            if (strstr(temp, "!!") != NULL)
+            {
+                strcpy(history[historyCounter], history[historyCounter - 1]);
+                //strcat(history[historyCounter],"\n");
+                //printf("DEST:%s  Source:%s", history[historyCounter], history[historyCounter - 1]);
+            }
+            else
+            {
+                strcpy(history[historyCounter], temp);
+            }
+            //strcpy(history[historyCounter], temp);
             historyCounter++;
         }
 
@@ -52,9 +59,6 @@ int main(void)
             printf("%s", args[i]);
             printf("\n");
         } */
-
-        //1. Fork child process with fork()
-        //pidC1 = fork();
 
         //check for exit command
         if (strcmp("exit", args[0]) == 0)
@@ -96,14 +100,14 @@ int main(void)
         }
 
         //Check for !! command (excecute most recent command)
+        //TODO: add case when there is no previous command.
         if (strcmp("!!", args[0]) == 0)
         {
             //most recent: historyCounter-1
             //Turn string into token
             int k = 0;
-            oldArgs[i] = strtok(history[historyCounter - 1], " ");
-            printf("%s",history[historyCounter-1]);
-            while (oldArgs[i] != NULL)
+            oldArgs[k] = strtok(history[historyCounter - 1], " ");
+            while (oldArgs[k] != NULL)
             {
                 oldArgs[++k] = strtok(NULL, " ");
             }
@@ -115,7 +119,13 @@ int main(void)
                 printf("\n");
             } */
 
-            memcpy(args,oldArgs,sizeof(oldArgs));
+            memcpy(args, oldArgs, sizeof(oldArgs));
+        }
+
+        //Check for ! command (excecute n past command)
+        if (strcmp("!", args[0]) == 0)
+        {
+            //Yeehaw
         }
 
         //Standard child handling
@@ -133,14 +143,13 @@ int main(void)
         }
         else if (shouldWait == 1)
         {
-            printf("Waiting...");
             wait(NULL);
             shouldWait = 0;
         }
-        else
+                 else
         {
             wait(NULL);
-        }
+        } 
 
         //2. Child will invoce execvp()
         //3. If command included &, parent will wait();
