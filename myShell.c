@@ -20,7 +20,7 @@ int main(void)
     while (should_run)
     {
         i = 0;
-        printf("\nshell>");
+        printf("\nosh>");
         fflush(stdout);
         //Ask for user input source: https://stackoverflow.com/questions/15472299/split-string-into-tokens-and-save-them-in-an-array
         fgets(temp, sizeof temp, stdin);
@@ -32,15 +32,21 @@ int main(void)
             if (strstr(temp, "!!") != NULL)
             {
                 strcpy(history[historyCounter], history[historyCounter - 1]);
-                //strcat(history[historyCounter],"\n");
-                //printf("DEST:%s  Source:%s", history[historyCounter], history[historyCounter - 1]);
+                strcat(history[historyCounter], "\0\n");
+                printf("DEST:%s  Source:%s", history[historyCounter], history[historyCounter - 1]);
+                historyCounter++;
+            }
+            else if (strstr(temp, "!") != NULL)
+            {
+                int a =1;
             }
             else
             {
                 strcpy(history[historyCounter], temp);
+                historyCounter++;
             }
             //strcpy(history[historyCounter], temp);
-            historyCounter++;
+            //historyCounter++;
         }
 
         //Turn string into token
@@ -96,6 +102,8 @@ int main(void)
                     //printf("%4d\t%s\n", historyCounter - k, oldArgs[k]);
                     printf("%4d\t%s", historyCounter - k, history[k]);
                 }
+                //printf("\nLast element: %s\n",history[k-1]);
+                printf("\n--------\n");
             }
         }
 
@@ -127,16 +135,24 @@ int main(void)
         {
             //Yeehaw
             //Turn the number to int
-            int k = 0;
-            oldArgs[k] = strtok(history[historyCounter-atoi(args[1]) - 1], " ");
-            while (oldArgs[k] != NULL)
+            int commandNum = atoi(args[1]);
+            if (commandNum > historyCounter)
             {
-                oldArgs[++k] = strtok(NULL, " ");
+                printf("No such command in history\n");
             }
-            numOfOldArgs = k;
-            oldArgs[numOfOldArgs - 1] = strtok(oldArgs[numOfOldArgs - 1], "\n");
+            else
+            {
+                int k = 0;
+                oldArgs[k] = strtok(history[historyCounter - commandNum -1], " ");
+                while (oldArgs[k] != NULL)
+                {
+                    oldArgs[++k] = strtok(NULL, " ");
+                }
+                numOfOldArgs = k;
+                oldArgs[numOfOldArgs - 1] = strtok(oldArgs[numOfOldArgs -1], "\n");
 
-            memcpy(args, oldArgs, sizeof(oldArgs));
+                memcpy(args, oldArgs, sizeof(oldArgs));
+            }
         }
 
         //Standard child handling
@@ -157,13 +173,10 @@ int main(void)
             wait(NULL);
             shouldWait = 0;
         }
-                 else
+        else
         {
             wait(NULL);
-        } 
-
-        //2. Child will invoce execvp()
-        //3. If command included &, parent will wait();
+        }
     }
     return 0;
 }
