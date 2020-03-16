@@ -28,7 +28,7 @@ int main(void)
         //If what the user typed doesnt have the "history" substring, add it to the history string
         if (strstr(temp, "history") == NULL)
         {
-            //puts temp into the position historyCounter if the history string array
+            //puts temp into the position historyCounter if the history string array has a !!
             if (strstr(temp, "!!") != NULL)
             {
                 if (historyCounter == 0)
@@ -39,10 +39,10 @@ int main(void)
                 {
                     strcpy(history[historyCounter], history[historyCounter - 1]);
                     strcat(history[historyCounter], "\0\n");
-                    //printf("DEST:%s  Source:%s", history[historyCounter], history[historyCounter - 1]);
                     historyCounter++;
                 }
             }
+            //just so it doesnt include the ! n command in history
             else if (strstr(temp, "!") != NULL)
             {
                 if (historyCounter == 0)
@@ -51,7 +51,6 @@ int main(void)
                 }
                 else
                 {
-                    //printf("%d \n", atoi(history[historyCounter][2]));
                     int a = 1;
                 }
             }
@@ -60,8 +59,6 @@ int main(void)
                 strcpy(history[historyCounter], temp);
                 historyCounter++;
             }
-            //strcpy(history[historyCounter], temp);
-            //historyCounter++;
         }
 
         //Turn string into token
@@ -73,14 +70,6 @@ int main(void)
         numOfArgs = i;
         args[numOfArgs - 1] = strtok(args[numOfArgs - 1], "\n");
 
-        //Code to see what arguments we have (debugging)
-        //printf("%d\n",numOfArgs);
-        /* for (i = 0; i < numOfArgs; i++)
-        {
-            printf("%s", args[i]);
-            printf("\n");
-        } */
-
         //check for exit command
         if (strcmp("exit", args[0]) == 0)
         {
@@ -88,7 +77,7 @@ int main(void)
             exit(0);
         }
 
-        //Check for &
+        //Check for & command
         if (strcmp("&", args[numOfArgs - 1]) == 0)
         {
             shouldWait = 1;
@@ -105,25 +94,16 @@ int main(void)
             else
             {
                 int k = 0;
-                /* oldArgs[k] = strtok(history, "\n");
-                while (oldArgs[k] != NULL)
-                {
-                    oldArgs[++k] = strtok(NULL, "\n");
-                } */
-                //oldArgs[k-1] = strtok(oldArgs[numOfArgs-1],"\n");
 
                 for (k = 0; k < historyCounter; k++)
                 {
-                    //printf("%4d\t%s\n", historyCounter - k, oldArgs[k]);
                     printf("%4d\t%s", historyCounter - k, history[k]);
                 }
-                //printf("\nLast element: %s\n",history[k-1]);
                 printf("\n--------\n");
             }
         }
 
         //Check for !! command (excecute most recent command)
-        //TODO: add case when there is no previous command.
         if (strcmp("!!", args[0]) == 0)
         {
             //most recent: historyCounter-1
@@ -134,7 +114,6 @@ int main(void)
             }
             else
             {
-                /* code */
 
                 int k = 0;
                 oldArgs[k] = strtok(history[historyCounter - 1], " ");
@@ -144,21 +123,15 @@ int main(void)
                 }
                 numOfOldArgs = k;
                 oldArgs[numOfOldArgs - 1] = strtok(oldArgs[numOfOldArgs - 1], "\n");
-                /* for (k = 0; k < numOfOldArgs; k++)
-            {
-                printf("%s", oldArgs[k]);
-                printf("\n");
-            } */
 
                 memcpy(args, oldArgs, sizeof(oldArgs));
             }
         }
 
-        //Check for ! command (excecute n past command)
+        //Check for ! n command (excecute n past command)
         if (strcmp("!", args[0]) == 0)
         {
-            //Yeehaw
-            //Turn the number to int
+            //Turn the number from char to int and check if in historyCounter range
             if ((atoi(args[1]) > historyCounter))
             {
                 printf("No such command in history\n");
@@ -175,7 +148,7 @@ int main(void)
                 oldArgs[numOfOldArgs - 1] = strtok(oldArgs[numOfOldArgs - 1], "\n");
 
                 strcpy(history[historyCounter], history[historyCounter - atoi(args[1])]);
-                strcat(history[historyCounter], "\0\n");
+                strcat(history[historyCounter-atoi(args[1])], "\0\n");
 
                 historyCounter++;
                 memcpy(args, oldArgs, sizeof(oldArgs));
@@ -190,7 +163,6 @@ int main(void)
         }
         else if (pidC1 == 0)
         {
-            //printf("Child ID: %d\n", getpid());
             //This line can't be modified according to the document.
             execvp(args[0], args);
             exit(0);
