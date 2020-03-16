@@ -31,14 +31,18 @@ int main(void)
             //puts temp into the position historyCounter if the history string array
             if (strstr(temp, "!!") != NULL)
             {
-                strcpy(history[historyCounter], history[historyCounter - 1]);
-                strcat(history[historyCounter], "\0\n");
-                printf("DEST:%s  Source:%s", history[historyCounter], history[historyCounter - 1]);
-                historyCounter++;
-            }
-            else if (strstr(temp, "!") != NULL)
-            {
-                int a =1;
+                if (historyCounter == 0)
+                {
+                    int a = 1; //do nothing
+                }
+                else
+                {
+
+                    strcpy(history[historyCounter], history[historyCounter - 1]);
+                    strcat(history[historyCounter], "\0\n");
+                    //printf("DEST:%s  Source:%s", history[historyCounter], history[historyCounter - 1]);
+                    historyCounter++;
+                }
             }
             else
             {
@@ -113,21 +117,30 @@ int main(void)
         {
             //most recent: historyCounter-1
             //Turn string into token
-            int k = 0;
-            oldArgs[k] = strtok(history[historyCounter - 1], " ");
-            while (oldArgs[k] != NULL)
+            if (historyCounter < 1)
             {
-                oldArgs[++k] = strtok(NULL, " ");
+                printf("No commands in history\n");
             }
-            numOfOldArgs = k;
-            oldArgs[numOfOldArgs - 1] = strtok(oldArgs[numOfOldArgs - 1], "\n");
-            /* for (k = 0; k < numOfOldArgs; k++)
+            else
+            {
+                /* code */
+
+                int k = 0;
+                oldArgs[k] = strtok(history[historyCounter - 1], " ");
+                while (oldArgs[k] != NULL)
+                {
+                    oldArgs[++k] = strtok(NULL, " ");
+                }
+                numOfOldArgs = k;
+                oldArgs[numOfOldArgs - 1] = strtok(oldArgs[numOfOldArgs - 1], "\n");
+                /* for (k = 0; k < numOfOldArgs; k++)
             {
                 printf("%s", oldArgs[k]);
                 printf("\n");
             } */
 
-            memcpy(args, oldArgs, sizeof(oldArgs));
+                memcpy(args, oldArgs, sizeof(oldArgs));
+            }
         }
 
         //Check for ! command (excecute n past command)
@@ -135,24 +148,21 @@ int main(void)
         {
             //Yeehaw
             //Turn the number to int
-            int commandNum = atoi(args[1]);
-            if (commandNum > historyCounter)
-            {
-                printf("No such command in history\n");
-            }
-            else
-            {
-                int k = 0;
-                oldArgs[k] = strtok(history[historyCounter - commandNum -1], " ");
-                while (oldArgs[k] != NULL)
-                {
-                    oldArgs[++k] = strtok(NULL, " ");
-                }
-                numOfOldArgs = k;
-                oldArgs[numOfOldArgs - 1] = strtok(oldArgs[numOfOldArgs -1], "\n");
 
-                memcpy(args, oldArgs, sizeof(oldArgs));
+            int k = 0;
+            oldArgs[k] = strtok(history[historyCounter - atoi(args[1]) - 1], " ");
+            while (oldArgs[k] != NULL)
+            {
+                oldArgs[++k] = strtok(NULL, " ");
             }
+            numOfOldArgs = k;
+            oldArgs[numOfOldArgs - 1] = strtok(oldArgs[numOfOldArgs - 1], "\n");
+
+            strcpy(history[historyCounter], history[historyCounter - atoi(args[1]) - 1]);
+            strcat(history[historyCounter - atoi(args[1]) - 1], "\0\n");
+
+            //historyCounter++;
+            memcpy(args, oldArgs, sizeof(oldArgs));
         }
 
         //Standard child handling
