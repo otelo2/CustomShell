@@ -13,7 +13,7 @@ int main(void)
     char *oldArgs[MAX_LINE / 2 + 1];
     int should_run, firstRun = 1; //flag to determine when to end program
     pid_t pidC1;
-    int numOfArgs, numOfOldArgs, i = 0;
+    int numOfArgs, numOfOldArgs, numPos, i = 0;
     int shouldWait = 0;
     int historyCounter = 0;
 
@@ -51,7 +51,58 @@ int main(void)
                 }
                 else
                 {
-                    int a = 1;
+                    //Super ugly but nothing else worked
+                    switch (temp[2])
+                    {
+                    case '1':
+                        strcpy(history[historyCounter], history[historyCounter - 1]);
+                        strcat(history[historyCounter - 1], "\0\n");
+                        historyCounter++;
+                        break;
+                    case '2':
+                        strcpy(history[historyCounter], history[historyCounter - 2]);
+                        strcat(history[historyCounter - 2], "\0\n");
+                        historyCounter++;
+                        break;
+                    case '3':
+                        strcpy(history[historyCounter], history[historyCounter - 3]);
+                        strcat(history[historyCounter - 3], "\0\n");
+                        historyCounter++;
+                        break;
+                    case '4':
+                        strcpy(history[historyCounter], history[historyCounter - 4]);
+                        strcat(history[historyCounter - 4], "\0\n");
+                        historyCounter++;
+                        break;
+                    case '5':
+                        strcpy(history[historyCounter], history[historyCounter - 5]);
+                        strcat(history[historyCounter - 5], "\0\n");
+                        historyCounter++;
+                        break;
+                    case '6':
+                        strcpy(history[historyCounter], history[historyCounter - 6]);
+                        strcat(history[historyCounter - 6], "\0\n");
+                        historyCounter++;
+                        break;
+                    case '7':
+                        strcpy(history[historyCounter], history[historyCounter - 7]);
+                        strcat(history[historyCounter - 7], "\0\n");
+                        historyCounter++;
+                        break;
+                    case '8':
+                        strcpy(history[historyCounter], history[historyCounter - 8]);
+                        strcat(history[historyCounter - 8], "\0\n");
+                        historyCounter++;
+                        break;
+                    case '9':
+                        strcpy(history[historyCounter], history[historyCounter - 9]);
+                        strcat(history[historyCounter - 9], "\0\n");
+                        historyCounter++;
+                        break;
+                    default:
+                        break;
+                    }
+                    
                 }
             }
             else
@@ -139,7 +190,7 @@ int main(void)
             else
             {
                 int k = 0;
-                oldArgs[k] = strtok(history[historyCounter - atoi(args[1]) ], " ");
+                oldArgs[k] = strtok(history[historyCounter - atoi(args[1])], " ");
                 while (oldArgs[k] != NULL)
                 {
                     oldArgs[++k] = strtok(NULL, " ");
@@ -147,11 +198,11 @@ int main(void)
                 numOfOldArgs = k;
                 oldArgs[numOfOldArgs - 1] = strtok(oldArgs[numOfOldArgs - 1], "\n");
 
-                strcpy(history[historyCounter], history[historyCounter - atoi(args[1])]);
-                strcat(history[historyCounter-atoi(args[1])], "\0\n");
-
-                historyCounter++;
                 memcpy(args, oldArgs, sizeof(oldArgs));
+                /* 
+                strcpy(history[historyCounter], history[historyCounter - atoi(args[1])]);
+                strcat(history[historyCounter - atoi(args[1])], "\0\n");
+                historyCounter++; */
             }
         }
 
