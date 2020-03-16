@@ -159,15 +159,14 @@ int main(void)
         {
             //Yeehaw
             //Turn the number to int
-            if (historyCounter < 1)
+            if ((atoi(args[1]) > historyCounter))
             {
-                printf("No commands in history\n");
+                printf("No such command in history\n");
             }
             else
             {
-
                 int k = 0;
-                oldArgs[k] = strtok(history[historyCounter - atoi(args[1]) - 1], " ");
+                oldArgs[k] = strtok(history[historyCounter - atoi(args[1]) ], " ");
                 while (oldArgs[k] != NULL)
                 {
                     oldArgs[++k] = strtok(NULL, " ");
@@ -175,10 +174,10 @@ int main(void)
                 numOfOldArgs = k;
                 oldArgs[numOfOldArgs - 1] = strtok(oldArgs[numOfOldArgs - 1], "\n");
 
-                //strcpy(history[historyCounter], history[historyCounter - atoi(args[1]) - 1]);
-                //strcat(history[historyCounter - atoi(args[1]) - 1], "\0\n");
+                strcpy(history[historyCounter], history[historyCounter - atoi(args[1])]);
+                strcat(history[historyCounter], "\0\n");
 
-                //historyCounter++;
+                historyCounter++;
                 memcpy(args, oldArgs, sizeof(oldArgs));
             }
         }
@@ -198,6 +197,7 @@ int main(void)
         }
         else if (shouldWait == 1)
         {
+            printf("\nDone.");
             wait(NULL);
             shouldWait = 0;
         }
