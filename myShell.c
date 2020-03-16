@@ -102,7 +102,6 @@ int main(void)
                     default:
                         break;
                     }
-                    
                 }
             }
             else
